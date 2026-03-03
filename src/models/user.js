@@ -24,26 +24,35 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    validate:{
+    validate: {
       validator: function (value) {
         return validator.isStrongPassword(value);
       },
-      message:"Invalid password..."
-    }
+      message: "Invalid password...",
+    },
   },
   age: {
     type: Number,
     min: 18,
   },
-  gendre: {
+  gender: {
     type: String,
   },
+  photoURL: {
+    type: String,
+    default:
+      "https://thumbs.dreamstime.com/b/default-avatar-profile-icon-social-media-user-vector-default-avatar-profile-icon-social-media-user-vector-portrait-176194876.jpg?w=768",
+  },
+  about:{
+    type:String,
+    default:"Hello! I am using DevTinder."
+  }
 });
 
 userSchema.methods.getjwt = async function () {
   const user = this;
-  const token = jwt.sign({_id:user._id}, "Manas@123");
+  const token = jwt.sign({ _id: user._id }, "Manas@123", { expiresIn: "7d" });
   return token;
-}
+};
 
 module.exports = mongoose.model("User", userSchema);

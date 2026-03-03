@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-// const { applyTimestamps } = require("./user");
 const User = require("../models/user");
 
 const connectionrequestSchema = new mongoose.Schema(

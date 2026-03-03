@@ -21,7 +21,7 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
   try {
     const loggedinuser = req.user;
 
-    const allowedkey = ["firstName", "lastName", "email"];
+    const allowedkey = ["firstName", "lastName", "age", "gender", "photoURL", "about"];
 
     const isallowed = Object.keys(req.body).every((item) =>
       allowedkey.includes(item),

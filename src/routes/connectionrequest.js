@@ -83,7 +83,7 @@ connectionrequestRouter.post(
 
       if (!connectionRequest) {
         return res.status(400).json({
-          message: "Connectio n not found",
+          message: "Connection not found",
         });
       }
 
@@ -112,19 +112,20 @@ connectionrequestRouter.get("/user/feed", userAuth, async (req, res) => {
     const skip = (page-1)*limit;
 
     const connections = await Connectionrequest.find({
-      $or: [{ fromUserID: loggedinUser }, { toUserID: loggedinUser }],
-    }).select("fromUserID toUserID");
+      $or: [{ fromUserID: loggedinUser._id }, { toUserID: loggedinUser._id }],
+    }).select("fromUserID toUserID photoURL");
 
     const hideUsers = new Set();
 
     connections.forEach((element) => {
       hideUsers.add(element.fromUserID.toString());
       hideUsers.add(element.toUserID.toString());
+      // hideUsers.add(loggedinUser._id.toString());
     });
 
     const user =await  User.find({
-      _id: { $in: Array.from(hideUsers) },
-    }).select("firstName lastName").skip(skip).limit(limit);
+      _id: { $nin: Array.from(hideUsers) },
+    }).select("firstName lastName photoURL").skip(skip).limit(limit);
 
     res.json({
       message: "Feed is added successfully",

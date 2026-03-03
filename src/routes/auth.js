@@ -8,15 +8,16 @@ userAuthRouter.post("/signup", async (req, res) => {
   // console.log(req.body);
 
   try {
-    const { password, firstName, lastName, email } = req.body;
-    const passwordhash = await bcrypt.hash(password, 10);
     validationSignupData(req);
+    const { password, email, firstName } = req.body;
+    const passwordhash = await bcrypt.hash(password, 10);
+
     const user = new User({
-      firstName,
-      lastName,
       email,
       password: passwordhash,
+      firstName,
     });
+
     await user.save();
     res.send("User added sucessfully");
 
@@ -31,9 +32,10 @@ userAuthRouter.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
+    // res.send(user);
 
     if (!user) {
-      res.send("Invalid email...");
+      return res.status(400).json({ message: "Invalid email..." });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -42,9 +44,11 @@ userAuthRouter.post("/login", async (req, res) => {
       const token = await user.getjwt();
 
       res.cookie("token", token);
-      res.send("Login successful..");
+      res.send(user);
     } else {
-      res.send("password is incorrect..");
+      res.status(400).json({
+        message: "password is incorrect",
+      });
     }
   } catch (error) {
     res.status(400).send("ERROR: " + error.message);
